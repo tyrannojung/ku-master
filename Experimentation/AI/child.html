@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Page</title>
+</head>
+<body>
+    <h1>자식 페이지</h1>
+
+    <script>
+        window.addEventListener('message', (e) => {
+            console.log('Message from Parent:', e.data);
+
+            // ports 배열에서 첫 번째 포트 추출
+            const port2 = e.ports[0];
+
+            if (port2) {
+                // 부모 페이지에 응답 메시지 전송
+                port2.postMessage('World from Child');
+            }
+        });
+    </script>
+</body>
+</html>

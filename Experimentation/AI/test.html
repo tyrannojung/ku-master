@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Key Generator with Local Storage</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+</head>
+<body>
+    <h2>Ethers.js를 사용한 프라이빗 키 생성 및 저장</h2>
+    <button onclick="generatePrivateKey()">프라이빗 키 생성 및 저장</button>
+    <p><strong>생성된 프라이빗 키:</strong></p>
+    <textarea id="privateKey" rows="4" cols="50" readonly></textarea>
+
+    <script>
+        function generatePrivateKey() {
+            // 새 지갑 생성
+            var wallet = ethers.Wallet.createRandom();
+
+            // 생성된 지갑에서 프라이빗 키 추출
+            var privateKey = wallet.privateKey;
+
+            // 화면에 프라이빗 키 표시
+            document.getElementById('privateKey').value = privateKey;
+
+            // 로컬 스토리지에 프라이빗 키 저장
+            localStorage.setItem('privateKey', privateKey);
+        }
+
+
+        const Channel = new BroadcastChannel('Example');
+
+        function SendMessage(){
+            // 입력한 문자를 가져와서 
+            let data = "hi"
+            // 본인을 제외한 다른 채널에 메세지를 전달합니다.
+            Channel.postMessage({type: data });
+        }
+
+        // 다른 채널에서 보낸 메세지를 받는 이벤트
+        Channel.onmessage = e => {
+            //	다른 채널에서 보낸 메세지를 화면에 출력합니다.
+            alert(e.data.type)
+        }
+    </script>
+</body>
+</html>

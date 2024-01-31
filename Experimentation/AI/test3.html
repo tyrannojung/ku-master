@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script>
+    // Example 라는 이름의 BroadcastChannel 을 생성.
+        //const Channel = new BroadcastChannel('Example');
+        const popup = window.open("http://localhost:3000/aiWallet2")
+
+        function SendMessage(){
+			popup.postMessage({type: data }, 'http://localhost');
+        }
+
+		// 다른 채널에서 보낸 메세지를 받는 이벤트
+        popup.onmessage = e => {
+        //	다른 채널에서 보낸 메세지를 화면에 출력합니다.
+            alert(e.data.type)
+        }
+
+    </script>
+</head>
+<body>
+    <button onclick="SendMessage()">Message Send</button>
+</body>
+</html>

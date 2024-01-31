@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Page</title>
+</head>
+<body>
+    <h1>부모 페이지</h1>
+    <iframe src="file:///Users/jungdawoon/ku-master/child.html" id="childFrame"></iframe>
+
+    <script>
+        // MessageChannel 인스턴스 생성
+        const channel = new MessageChannel();
+
+        // iframe 요소 가져오기
+        const iframe = document.getElementById('childFrame');
+
+        // iframe 로드 완료 시 메시지 전송
+        iframe.addEventListener('load', () => {
+            iframe.contentWindow.postMessage('Hello from Parent', '*', [channel.port2]);
+        });
+
+        // 자식으로부터 메시지 수신 시 콘솔에 출력
+        channel.port1.onmessage = (e) => console.log('Message from Child:', e.data);
+    </script>
+</body>
+</html>
