@@ -5,8 +5,7 @@ const Message = (req, res) =>  {
     
         // 메시지 처리 로직 추가
         console.log(`Received message: ${message}`);
-    
-      
+     
       // 성공 응답 반환
       res.status(200).json({ message: 'Message processed successfully' });
     } else {

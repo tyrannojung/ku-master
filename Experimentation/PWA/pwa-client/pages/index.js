@@ -1,8 +1,16 @@
 const Home = () => {
-  const handleClick = () => {
+  const handleClick = async () => {
     // 버튼을 클릭할 때 메시지를 보내는 로직을 추가
-    const message = 'Hello from A page!'; // 보낼 메시지 내용
-    window.postMessage({ type: 'custom', data: message }, 'http://localhost:3000/');
+    const subscription = '{"endpoint":"https://fcm.googleapis.com/fcm/send/eqCfzlBUDS8:APA91bGw244UGwvHyZVFp6u98hxaU6oKrKDAtVFt5onMwp9mNc307rR7vN6aE07htQ2jbsTO-1k3mZ5W2yA_dWaGIeZxEA2knP1uMsgkxKocoG8FEC6RyK0LFLOhF_3mkWrQGotbn_iu","expirationTime":null,"keys":{"p256dh":"BHoIbx-X3yhtBLHoaskTQDXxv3dIr6PHXiLF_7fRVbtld3ckPJPMSZx1lOU4iPiJb3C_7RJxSzPebuyZ08CnBY0","auth":"AhCpQnROZuQpqwiW4XAQZw"}}'; // 보낼 메시지 내용
+    await fetch('http://localhost:3000/api/notification', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: subscription
+    
+    })
   };
 
   return (
