@@ -75,6 +75,14 @@ const Index = () => {
     })
   }
 
+  const sendMessageButtonOnClick = async () => {
+    const message = "Your predefined message or a message from user input";
+    console.log('h1?')
+    window.workbox.messageSW({command: 'log', message: 'hello world'})
+
+    
+  }
+
   return (
     <>
       <Head>
@@ -89,6 +97,10 @@ const Index = () => {
       </button>
       <button onClick={sendNotificationButtonOnClick} disabled={!isSubscribed}>
         Send Notification
+      </button>
+      {/* New button to send a message */}
+      <button onClick={sendMessageButtonOnClick}>
+        Send Message
       </button>
     </>
   )
