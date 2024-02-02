@@ -37,7 +37,7 @@ const Notification = async (req, res) => {
     webPush
       .sendNotification(
         subscription,
-        JSON.stringify({ title: 'Hello Web Push', message: 'Your web push notification is here!' })
+        JSON.stringify({ title: 'Hello Web Push', message: 'Your web push notification is here!', type: 'push' })
       )
       .then(response => {
         res.writeHead(response.statusCode, response.headers).end(response.body)
