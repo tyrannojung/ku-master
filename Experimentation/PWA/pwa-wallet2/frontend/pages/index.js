@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { ethers } from 'ethers';
+
 import Head from 'next/head'
 
 const base64ToUint8Array = base64 => {
@@ -18,6 +20,8 @@ const Index = () => {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [subscription, setSubscription] = useState(null)
   const [registration, setRegistration] = useState(null)
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && window.workbox !== undefined) {
@@ -33,6 +37,62 @@ const Index = () => {
       })
     }
   }, [])
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 기존 세션 확인
+    const session = localStorage.getItem('isAuthenticated');
+    if (session === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleSignup = async () => {
+    setPassword("12345")
+    const signupPassword = password
+    const wallet = ethers.Wallet.createRandom();
+    const encryptedJsonKey = await wallet.encrypt(signupPassword);
+    localStorage.setItem('encryptedPrivateKey', encryptedJsonKey);
+    localStorage.setItem('isAuthenticated', 'true');
+    alert('Account created successfully. Your private key has been encrypted and stored securely.');
+  };
+
+  const handleLogin = async () => {
+    // Retrieve the encrypted private key from localStorage
+    const encryptedJsonKey = localStorage.getItem('encryptedPrivateKey');
+  
+    if (!encryptedJsonKey) {
+      alert('No account found. Please sign up.');
+      return;
+    }
+  
+    try {
+      // Decrypt the private key using the user's login password
+      const wallet = await ethers.Wallet.fromEncryptedJson(encryptedJsonKey, password);
+      const publicKey = wallet.publicKey;
+      const privateKey = wallet.privateKey;
+      
+      // Set isAuthenticated and display the private key
+      
+      setIsAuthenticated(true);
+      localStorage.setItem('isAuthenticated', 'true');
+      alert(`Login successful. Your public key is: ${publicKey} Your private key is: ${privateKey}`);
+      sessionStorage.setItem('privateKey', privateKey)
+      alert(sessionStorage.getItem('privateKey'))
+
+    } catch (error) {
+      console.log(error)
+      setIsAuthenticated(false);
+      localStorage.removeItem('isAuthenticated');
+      alert('Failed to login. Incorrect password or account does not exist.');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('isAuthenticated'); // localStorage에서 세션 제거
+    sessionStorage.removeItem('privateKey');
+  };
+
 
   const subscribeButtonOnClick = async event => {
     event.preventDefault()
@@ -55,6 +115,11 @@ const Index = () => {
     setSubscription(null)
     setIsSubscribed(false)
     console.log('web push unsubscribed!')
+  }
+
+  const checkLogin = async event => {
+    alert(sessionStorage.getItem('privateKey'))
+    
   }
 
   const sendNotificationButtonOnClick = async event => {
@@ -100,12 +165,33 @@ const Index = () => {
     })
   }
 
+  const sendMessageButtonOnClickA = async () => {
+    console.log('h1?')
+    window.workbox.messageSW({command: 'log', privateKey: sessionStorage.getItem('privateKey')})
+  }
+
   return (
     <>
       <Head>
         <title>next-pwa example</title>
       </Head>
       <h1>Next.js + PWA = AWESOME!</h1>
+
+
+      {!isAuthenticated ? (
+        <>
+          <button onClick={handleSignup}>회원 가입</button>
+          <button onClick={handleLogin}>로그인</button>
+        </>
+      ) : (
+        <>
+          <button onClick={handleLogout}>로그아웃</button>
+          <button onClick={checkLogin}>로그인 정보 확인</button>
+        </>
+      )}
+
+      
+      <br/>
       <button onClick={subscribeButtonOnClick} disabled={isSubscribed}>
         Subscribe
       </button>
@@ -118,6 +204,9 @@ const Index = () => {
       {/* New button to send a message */}
       <button onClick={sendMessageButtonOnClick}>
         Send Message
+      </button>
+      <button onClick={sendMessageButtonOnClickA}>
+        Send Message2
       </button>
     </>
   )

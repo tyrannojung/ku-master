@@ -1,4 +1,5 @@
 const webPush = require('web-push')
+import Cors from 'cors';
 
 webPush.setVapidDetails(
   `mailto:${process.env.WEB_PUSH_EMAIL}`,
@@ -6,7 +7,30 @@ webPush.setVapidDetails(
   process.env.WEB_PUSH_PRIVATE_KEY
 )
 
-const Notification = (req, res) => {
+// 특정 출처만 허용하는 CORS 미들웨어 구성
+const cors = Cors({
+  methods: ['POST'], // 허용할 HTTP 메소드
+  origin: 'http://localhost:3005', // 허용할 출처 지정
+  // origin: ['http://localhost:3005', 'https://example.com'], // 여러 출처를 허용할 경우 배열 사용
+});
+
+// 미들웨어를 실행하는 도우미 함수
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
+}
+
+const Notification = async (req, res) => {
+
+  // CORS 미들웨어 실행
+  await runMiddleware(req, res, cors);
+
   if (req.method == 'POST') {
     const { subscription } = req.body
 
