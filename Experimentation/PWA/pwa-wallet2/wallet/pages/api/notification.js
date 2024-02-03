@@ -32,12 +32,17 @@ const Notification = async (req, res) => {
   await runMiddleware(req, res, cors);
 
   if (req.method == 'POST') {
-    const { subscription } = req.body
+    console.log("============================")
+    console.log(req.body)
+    const [ subscription, transaction ] = req.body
+    
+    console.log(subscription)
+    console.log(transaction)
 
     webPush
       .sendNotification(
         subscription,
-        JSON.stringify({ title: 'Hello Web Push', message: 'Your web push notification is here!', type: 'push' })
+        JSON.stringify({ transaction: transaction, type: 'push' })
       )
       .then(response => {
         res.writeHead(response.statusCode, response.headers).end(response.body)

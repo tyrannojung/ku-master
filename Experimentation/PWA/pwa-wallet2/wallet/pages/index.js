@@ -3,6 +3,13 @@ import { ethers } from 'ethers';
 
 import Head from 'next/head'
 
+const transaction = {
+  from: "0x84207aCCB87EC578Bef5f836aeC875979C1ABA85",
+  to: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+  value: ethers.utils.parseEther("0"),
+  data: "0x68656c6c6f"
+};
+
 const base64ToUint8Array = base64 => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4)
   const b64 = (base64 + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -49,7 +56,8 @@ const Index = () => {
   const handleSignup = async () => {
     setPassword("12345")
     const signupPassword = password
-    const wallet = ethers.Wallet.createRandom();
+    const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY;
+    const wallet = new ethers.Wallet(privateKey);
     const encryptedJsonKey = await wallet.encrypt(signupPassword);
     localStorage.setItem('encryptedPrivateKey', encryptedJsonKey);
     localStorage.setItem('isAuthenticated', 'true');
@@ -129,14 +137,15 @@ const Index = () => {
       return
     }
     console.log("subscription===", subscription)
+    const dataArray = [subscription, transaction]; 
     await fetch('/api/notification', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({
-        subscription
-      })
+      body: JSON.stringify(
+        dataArray
+      )
     })
   }
 
@@ -152,15 +161,15 @@ const Index = () => {
           "auth": "AhCpQnROZuQpqwiW4XAQZw"
       }
   }
-    // cors가 문제인가..?
+    const dataArray = [subscription, transaction]; 
     await fetch('/api/notification', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({
-        subscription
-      })
+      body: JSON.stringify(
+        dataArray
+      )
     
     })
   }

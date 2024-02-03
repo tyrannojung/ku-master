@@ -8,15 +8,26 @@ const Home = () => {
           "p256dh": "BHoIbx-X3yhtBLHoaskTQDXxv3dIr6PHXiLF_7fRVbtld3ckPJPMSZx1lOU4iPiJb3C_7RJxSzPebuyZ08CnBY0",
           "auth": "AhCpQnROZuQpqwiW4XAQZw"
       }
-  }
+    }
+
+    const transaction = {
+      from: "0x84207aCCB87EC578Bef5f836aeC875979C1ABA85",
+      to: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+      value: ethers.utils.parseEther("0"),
+      data: "0x68656c6c6f"
+    };
+
+    const dataArray = [subscription, transaction];
+
+
     await fetch('http://localhost:3000/api/notification', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({
-        subscription
-      })
+      body: JSON.stringify(
+        dataArray
+      )
     
     })
   };
