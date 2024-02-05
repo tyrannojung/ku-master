@@ -117,7 +117,12 @@ const Index = () => {
           onClick={handleLogin} 
           className={`${styles.button} ${styles.loginButton}`}
         >
-          로그인
+          EOA 로그인
+        </button>
+        <button 
+          className={`${styles.button} ${styles.loginButton}`} disabled
+        >
+          SC 로그인(준비중)
         </button>
         <button 
           onClick={unsubscribeButtonOnClick} 

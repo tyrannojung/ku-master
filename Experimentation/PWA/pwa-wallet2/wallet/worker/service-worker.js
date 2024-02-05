@@ -1,16 +1,16 @@
 'use strict'
 import { ethers } from 'ethers';
 
-// const providerUrl = 'https://goerli.infura.io/v3/4c79c22d05294f9f81fbe2501462ac22';
-// const provider = new ethers.providers.JsonRpcProvider(providerUrl);
-// const wallet = new ethers.Wallet(testprivateKey, provider);
+const providerUrl = 'https://goerli.infura.io/v3/4c79c22d05294f9f81fbe2501462ac22';
+const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 
 
 let privateKey = ""
 let timer
 let timerId
 let transaction
-
+let check_goerli = false
+let transactionHash
 
 const startTimer = async () => {
   timer = async () => {
@@ -46,6 +46,7 @@ self.addEventListener('push', function (event) {
   let data = JSON.parse(event.data.text())
   // type 을 나눠서 처리한다.
   let type = data.type
+  
   //트랜잭션을 메모리에 등록한다.
   transaction = data.transaction
 
@@ -76,26 +77,44 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', async function (event) {
   console.log("========push 클릭 동적 동작 이벤트 ======")
+  event.notification.close();
+
+  if(check_goerli){
+    check_goerli = false
+    return clients.openWindow(`https://goerli.etherscan.io/tx/${transactionHash}`)
+  }
+
   switch(event.action) {
     case "close":
-      event.notification.close(); 
       return;
+
     case "explore":
       console.log("서명하기")
-      console.log(transaction)
-        // const tx = await wallet.sendTransaction(testtransaction);
-        // const receipt = await tx.wait();
-        // console.log('Transaction receipt:', receipt);
+      const wallet = new ethers.Wallet(privateKey, provider);
+      const tx = await wallet.sendTransaction(transaction);
+      const receipt = await tx.wait();
+      console.log('Transaction receipt:', receipt);
+      check_goerli = true
+      transactionHash = receipt.transactionHash
+      
+      event.waitUntil(
+        registration.showNotification("Transaction Signature", {
+          body: `The requested transaction has been completed.`,
+          icon: '/icons/icon-192x192.png',
+          actions: [
+            { action: 'close', title: '취소', icon: '/icons/push/close-icon.png' }
+          ]
+        })
+      )
 
-      event.notification.close();
       return;
   }
 
   console.log("site로 이동하기")
+  
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
-      console.log("clientList ===")
-      console.log(clientList)
+      
       if (clientList.length > 0) {
         let client = clientList[0]
         for (let i = 0; i < clientList.length; i++) {
@@ -103,9 +122,15 @@ self.addEventListener('notificationclick', async function (event) {
             client = clientList[i]
           }
         }
+        //창이 열려 있다면 해당 창 포커스
         return client.focus()
       }
-      return clients.openWindow('/')
+
+      const subAsString = encodeURIComponent(JSON.stringify(transaction));
+      // 창이 닫혀 있다면 해당 창 오픈
+      console.log(`/detail?tran=${subAsString}`)
+      return clients.openWindow(`/detail?tran=${subAsString}`)
     })
   )
+
 })
