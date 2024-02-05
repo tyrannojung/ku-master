@@ -56,7 +56,7 @@ self.addEventListener('push', function (event) {
     case "push" : {
       event.waitUntil(
         registration.showNotification("트랜잭션 서명", {
-          body: `트랜잭션을 서명하시겠습니까? private key === ${privateKey}`,
+          body: `트랜잭션을 서명하시겠습니까?`,
           icon: '/icons/icon-192x192.png',
           requireInteraction: true, // 사용자 상호작용이 있을 때까지 알림 유지
           actions: [
