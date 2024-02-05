@@ -30,14 +30,13 @@ const startTimer = async () => {
 self.addEventListener('message', function (event) {
   //==================현재 로그인 느낌=====================
 
-  console.log("hi??44444")
-  // type을 추가 한다.
+  console.log("hi??5*")
 
-  console.log(event?.data);
+  //console.log(event?.data);
   privateKey = event?.data.privateKey;
   
   event.waitUntil(startTimer().then(() => {
-    console.log("타이머가 완료되었습니다. 222");
+    console.log("타이머가 완료되었습니다.");
   }));
 
 });
@@ -47,16 +46,14 @@ self.addEventListener('push', function (event) {
   let data = JSON.parse(event.data.text())
   // type 을 나눠서 처리한다.
   let type = data.type
+  //트랜잭션을 메모리에 등록한다.
   transaction = data.transaction
-  console.log("=======push event========")
-  console.log(transaction)
-  console.log(type)
-  console.log("=======push event end========")
+
   switch (type) {
     case "push" : {
       event.waitUntil(
-        registration.showNotification("트랜잭션 서명", {
-          body: `트랜잭션을 서명하시겠습니까?`,
+        registration.showNotification("Transaction Signature", {
+          body: `Would you like to sign the transaction?`,
           icon: '/icons/icon-192x192.png',
           requireInteraction: true, // 사용자 상호작용이 있을 때까지 알림 유지
           actions: [

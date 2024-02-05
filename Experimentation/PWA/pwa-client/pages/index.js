@@ -5,18 +5,15 @@ import { useRouter } from 'next/router';
 
 const Home = () => {
   const router = useRouter();
+  const { pubk, sub } = router.query;
+  const subObject = sub ? JSON.parse(decodeURIComponent(sub)) : null;
+  console.log(pubk)
+  console.log(subObject)
 
 
   const sendTransaction = async () => {
     // 버튼을 클릭할 때 메시지를 보내는 로직을 추가
-    const subscription = {
-      "endpoint": "https://fcm.googleapis.com/fcm/send/eqCfzlBUDS8:APA91bGw244UGwvHyZVFp6u98hxaU6oKrKDAtVFt5onMwp9mNc307rR7vN6aE07htQ2jbsTO-1k3mZ5W2yA_dWaGIeZxEA2knP1uMsgkxKocoG8FEC6RyK0LFLOhF_3mkWrQGotbn_iu",
-      "expirationTime": null,
-      "keys": {
-          "p256dh": "BHoIbx-X3yhtBLHoaskTQDXxv3dIr6PHXiLF_7fRVbtld3ckPJPMSZx1lOU4iPiJb3C_7RJxSzPebuyZ08CnBY0",
-          "auth": "AhCpQnROZuQpqwiW4XAQZw"
-      }
-    }
+    const subscription = subObject
 
     const transaction = {
       from: "0x84207aCCB87EC578Bef5f836aeC875979C1ABA85",
@@ -64,6 +61,12 @@ const Home = () => {
       >
         Send Transaction
       </button>
+      {pubk && (
+        <div className={styles.dataDisplay}>
+          <h2>Login Complete</h2>
+          <p>public key : {pubk}</p>
+        </div>
+      )}
     </div>
   );
 };

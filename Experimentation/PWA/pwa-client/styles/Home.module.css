@@ -36,3 +36,10 @@
 .transactionButton {
   background-color: #34A853;
 }
+
+.dataDisplay {
+  margin: 20px 0;
+  padding: 10px;
+  border: 1px solid #ccc; /* 경계선 색상은 원하는 대로 조정 */
+  border-radius: 5px; /* 경계선 둥글기 */
+}
