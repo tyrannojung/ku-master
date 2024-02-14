@@ -2,7 +2,6 @@ import styles from '../styles/Home.module.css';
 import base64url from 'base64url';
 
 import { useEffect, useState } from 'react'
-import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 
 import Head from 'next/head'
@@ -81,9 +80,6 @@ const Index = () => {
     
     console.log("regCredential ===", regCredential)
     
-    // 인증정보 저장 2
-    localStorage.setItem('regCredential', JSON.stringify(regCredential));
-
     const getRegCredential = JSON.parse(localStorage.getItem('regCredential'));
     
     // 허용 안되면 뒤로 가기
@@ -91,7 +87,14 @@ const Index = () => {
     const prfSupported = !!(
       extensionResults.prf && extensionResults.prf.enabled
     );
+    if(!prfSupported){
+      alert("지원 x")
+      return
+    }
     //////////////
+    // 인증정보 저장 2
+    localStorage.setItem('regCredential', JSON.stringify(regCredential));
+    console.log(base64url.toBuffer(getRegCredential.rawId).buffer)
 
     console.log(`PRF 지원됨: ${prfSupported}`);
 
@@ -100,7 +103,7 @@ const Index = () => {
         challenge: new Uint8Array([9, 0, 1, 2]), // 예시 값
         allowCredentials: [
           {
-            id: base64url.toBuffer(getRegCredential.rawId),
+            id: base64url.toBuffer(getRegCredential.rawId).buffer,
             transports: getRegCredential.response.transports,
             type: "public-key",
           },
@@ -220,7 +223,7 @@ const Index = () => {
     const getRegCredential = JSON.parse(localStorage.getItem('regCredential'));
     const auth1Credential = await navigator.credentials.get({
       publicKey: {
-        challenge: new Uint8Array([9, 0, 1, 2]), // 예시 값
+        challenge: new Uint8Array([9, 8, 1, 3]), // 예시 값
         allowCredentials: [
           {
             id: base64url.toBuffer(getRegCredential.rawId),
@@ -285,6 +288,7 @@ const Index = () => {
     );
 
     let private_key = new TextDecoder().decode(decrypted)
+
     private_key = `0x${private_key}`
     console.log(private_key)
 
